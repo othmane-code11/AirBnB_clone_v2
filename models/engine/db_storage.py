@@ -36,16 +36,16 @@ class DBStorage:
         """Query all objects depend on the class name"""
         dictn = {}
         if cls:
-            if type(cls) == str:
+            if type(cls) is str:
                 cls = eval(cls)
-            for obj in self.__session.query(cls):
-                key = f"{type(obj).__name__}.{obj.id}"
+            for obj in self.__session.query(cls).all():
+                key = f"{cls.__name__}.{obj.id}"
                 dictn[key] = obj
         else:
             classes = [State, City, User, Place, Review, Amenity]
             for clas in classes:
-                for obj in self.__session.query(clas):
-                    key = f"{type(obj).__name__}.{obj.id}"
+                for obj in self.__session.query(clas).all():
+                    key = f"{cls.__name__}.{obj.id}"
                     dictn[key] = obj
         return dictn
 
