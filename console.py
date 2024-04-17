@@ -113,25 +113,9 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def parse_the_value(self, vlue):
-        """ Parses the value before passe it to the kwrgs"""
-        try:
-            if vlue[0] == '"' and vlue[-1] == '"':
-                parsed_vlue = vlue[1:-1]
-                parsed_vlue = parsed_vlue.replace('\\"', '"')
-                parsed_vlue = parsed_vlue.replace('_', ' ')
-                return parsed_vlue
-            elif '.' in vlue:
-                return float(vlue)
-            else:
-                return int(vlue)
-        except ValueError:
-            return None
-
     def do_create(self, args):
-        """ Create an object of any class"""
+        """Create an object from a class"""
         args_lst = args.split()
-
         if len(args_lst) == 0:
             print("** class name missing **")
             return
@@ -139,18 +123,31 @@ class HBNBCommand(cmd.Cmd):
             if args_lst[0] not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-
             kwrgs = {}
             for ar in args_lst[1:]:
                 if "=" in ar:
-                    key, val = ar.split("=")
-                    val = self.parse_the_value(val)
-                    if val:
+                    key, val = ar.split('=')
+                    val = self.parse_value(val)
+                    if val is not None:
                         kwrgs[key] = val
-
             new_instance = HBNBCommand.classes[args_lst[0]](**kwrgs)
-            new_instance.save()
             print(new_instance.id)
+            new_instance.save()
+
+    def parse_the_value(self, val):
+        """ Parses the value before passe it to the kwrgs"""
+        try:
+            if val[0] == '"' and val[-1] == '"':
+                parsed_val = val[1:-1]
+                parsed_val = parsed_val.replace('\\"', '"')
+                parsed_val = parsed_val.replace('_', ' ')
+                return parsed_val
+            elif '.' in val:
+                return float(val)
+            else:
+                return int(val)
+        except ValueError:
+            return None
 
     def help_create(self):
         """ Help information for the create method """
@@ -213,7 +210,7 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            del(storage.all()[key])
+            del (storage.all()[key])
             storage.save()
         except KeyError:
             print("** no instance found **")
@@ -225,20 +222,21 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, args):
         """ Shows all objects, or all objects of a class"""
-        print_lst = []
+        print_list = []
 
         if args:
-            args = args.split(' ')[0]
+            args = args.split(' ')[0]  # remove possible trailing args
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            objcts = storage.all(HBNBCommand.classes[args])
+            objects = storage.all(HBNBCommand.classes[args])
         else:
-            objcts = storage.all()
+            objects = storage.all()
 
-        for obj in objcts.values():
-            print_lst.append(str(obj))
-        print(print_lst)
+        for obj in objects.values():
+            print_list.append(str(obj))
+
+        print(print_list)
 
     def help_all(self):
         """ Help information for the all command """
