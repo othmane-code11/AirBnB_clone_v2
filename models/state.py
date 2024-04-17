@@ -22,9 +22,15 @@ class State(BaseModel, Base):
         """
         getter for list of city instances related to the state
         """
-        city_lst = []
-        all_cities = models.storage.all(City)
-        for city in all_cities.values():
-            if city.state_id == self.id:
-                city_lst.append(city)
-        return city_lst
+        all_var = models.storage.all()
+        lst = []
+        for key in all_var:
+            city = key.replace('.', ' ')
+            city = shlex.split(city)
+            if (city[0] == 'City'):
+                lst.append(all_var[key])
+        res = []
+        for i in lst:
+            if (i.state_id == self.id):
+                res.append(i)
+        return (res)
