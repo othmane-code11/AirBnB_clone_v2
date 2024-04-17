@@ -43,13 +43,7 @@ class BaseModel:
         """
         returns a string of class name, id, and dictionary
         """
-        return f"[{type(self).__name__}] ({self.id}) {self.__dict__}"
-
-    def __repr__(self):
-        """
-        return a string representaion
-        """
-        return self.__str__()
+        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
     def save(self):
         """
@@ -63,7 +57,7 @@ class BaseModel:
         """
         returns a dictionary of all the key values in __dict__
         """
-        dict = dict(self.__dict__)
+        dict = self.__dict__.copy()
         dict["__class__"] = str(type(self).__name__)
         dict["created_at"] = self.created_at.isoformat()
         dict["updated_at"] = self.updated_at.isoformat()
