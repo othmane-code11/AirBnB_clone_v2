@@ -6,6 +6,7 @@ from sqlalchemy.orm import relationship
 from os import getenv
 from models.city import City
 import models
+import shlex
 
 
 class State(BaseModel, Base):
