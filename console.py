@@ -113,6 +113,21 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
+    def parse_the_value(self, vlue):
+        """ Parses the value before passe it to the kwrgs"""
+        try:
+            if vlue[0] == '"' and vlue[-1] == '"':
+                parsed_vlue = vlue[1:-1]
+                parsed_vlue = parsed_vlue.replace('\\"', '"')
+                parsed_vlue = parsed_vlue.replace('_', ' ')
+                return parsed_vlue
+            elif '.' in vlue:
+                return float(vlue)
+            else:
+                return int(vlue)
+        except ValueError:
+            return None
+
     def do_create(self, args):
         """ Create an object of any class"""
         args_lst = args.split()
@@ -128,11 +143,10 @@ class HBNBCommand(cmd.Cmd):
             kwrgs = {}
             for ar in args_lst[1:]:
                 if "=" in ar:
-                    key, value = ar.split('=')
-                    value = eval(value)
-                    if type(value) is str:
-                        value = value.replace("_", " ").replace('"', '\\"')
-                    kwrgs[key] = value
+                    key, val = ar.split("=")
+                    val = self.parse_the_value(val)
+                    if val:
+                        kwrgs[key] = val
 
             new_instance = HBNBCommand.classes[args_lst[0]](**kwrgs)
             new_instance.save()
@@ -211,19 +225,20 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, args):
         """ Shows all objects, or all objects of a class"""
-        print_list = []
+        print_lst = []
 
         if args:
-            args = args.split(' ')[0]  # remove possible trailing args
+            args = args.split(' ')[0]
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage.all(HBNBCommand.classes[args]).items():
-                print_list.append(str(v))
+            objcts = storage.all(HBNBCommand.classes[args])
         else:
-            for k, v in storage.all().items():
-                print_list.append(str(v))
-        print(print_list)
+            objcts = storage.all()
+
+        for obj in objcts.values():
+            print_lst.append(str(obj))
+        print(print_lst)
 
     def help_all(self):
         """ Help information for the all command """
