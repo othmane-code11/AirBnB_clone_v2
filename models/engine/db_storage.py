@@ -39,14 +39,31 @@ class DBStorage:
             if type(cls) is str:
                 cls = eval(cls)
             for obj in self.__session.query(cls).all():
-                key = f"{cls.__name__}.{obj.id}"
-                dictn[key] = obj
+                key = f"{type(obj).__name__}.{obj.id}"
+                try:
+                    cls_str = ['State', 'City', 'User', 'Place', 'Review', 'Amenity']
+                    if obj.__class__.__name__ in cls_str:
+                        del obj._sa_instance_state
+                        dictn[key] = obj
+                    else:
+                        dictn[key] = obj
+                except Exception:
+                    pass
+
         else:
             classes = [State, City, User, Place, Review, Amenity]
             for clas in classes:
                 for obj in self.__session.query(clas).all():
-                    key = f"{cls.__name__}.{obj.id}"
-                    dictn[key] = obj
+                    key = f"{type(obj).__name__}.{obj.id}"
+                    try:
+                        cls_strr = ['State', 'City', 'User', 'Place', 'Review', 'Amenity']
+                        if obj.__class__.__name__ in cls_strr:
+                            del obj._sa_instance_state
+                            dictn[key] = obj
+                        else:
+                            dictn[key] = obj
+                    except Exception:
+                        pass
         return dictn
 
     def new(self, obj):
