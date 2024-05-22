@@ -127,7 +127,7 @@ class HBNBCommand(cmd.Cmd):
             for ar in args_lst[1:]:
                 if "=" in ar:
                     key, val = ar.split('=')
-                    val = self.parse_value(val)
+                    val = self.parse_the_value(val)
                     if val is not None:
                         kwrgs[key] = val
             new_instance = HBNBCommand.classes[args_lst[0]](**kwrgs)
